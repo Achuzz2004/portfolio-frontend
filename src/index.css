@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', sans-serif; /* apply Inter globally */
   line-height: 1.5;
   font-weight: 400;
 
@@ -32,11 +32,13 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  font-family: 'Inter', sans-serif; /* switched from Poppins */
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  font-weight: 700; /* make headings bold */
 }
 
 button {
