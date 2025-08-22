@@ -32,7 +32,7 @@ export default function Home() {
         transition={{ duration: 0.8 }}
       >
         <motion.img 
-          src={profile?.photo || 'https://via.placeholder.com/150'} 
+          src={profile?.photo || '/assets/IMG_20240916_091715_347.jpg'} 
           alt="profile" 
           className="w-40 h-40 rounded-full mx-auto object-cover border-4 border-pink-200"
           initial={{ scale: 0.8, opacity: 0 }}
