@@ -41,7 +41,7 @@ viewport={{ once: true }}
 <div className="flex flex-col md:flex-row items-center gap-8">  
 {/* Profile Image */}  
 <motion.img  
-src={profile.photo || '/assets/placeholder.jpg'}  
+src={profile.photo || '/assets/IMG_20240916_091715_347.jpg'}  
 alt="profile"  
 className="w-44 h-44 rounded-full object-cover border-4 border-sky-200 dark:border-sky-600"  
 initial={{ scale: 0.8, opacity: 0 }}  
