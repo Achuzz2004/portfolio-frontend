@@ -28,7 +28,7 @@ function App() {
           initial="hidden"
           whileInView="visible"
           variants={sectionVariants}
-          viewport={{ once: true }}
+          viewport={{ once: false, amount: 0.3 }} // triggers animation every time
         >
           <Home />
         </motion.section>
@@ -39,7 +39,7 @@ function App() {
           initial="hidden"
           whileInView="visible"
           variants={sectionVariants}
-          viewport={{ once: true }}
+          viewport={{ once: false, amount: 0.3 }}
         >
           <About />
         </motion.section>
@@ -50,7 +50,7 @@ function App() {
           initial="hidden"
           whileInView="visible"
           variants={sectionVariants}
-          viewport={{ once: true }}
+          viewport={{ once: false, amount: 0.3 }}
         >
           <Skills />
         </motion.section>
@@ -61,7 +61,7 @@ function App() {
           initial="hidden"
           whileInView="visible"
           variants={sectionVariants}
-          viewport={{ once: true }}
+          viewport={{ once: false, amount: 0.3 }}
         >
           <Education />
         </motion.section>
@@ -72,7 +72,7 @@ function App() {
           initial="hidden"
           whileInView="visible"
           variants={sectionVariants}
-          viewport={{ once: true }}
+          viewport={{ once: false, amount: 0.3 }}
         >
           <Experience />
         </motion.section>
@@ -83,7 +83,7 @@ function App() {
           initial="hidden"
           whileInView="visible"
           variants={sectionVariants}
-          viewport={{ once: true }}
+          viewport={{ once: false, amount: 0.3 }}
         >
           <Projects />
         </motion.section>
