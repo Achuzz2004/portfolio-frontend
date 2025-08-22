@@ -34,17 +34,17 @@ export default function About() {
                        border rounded-2xl shadow-xl p-8 
                        hover:scale-105 hover:shadow-2xl transition-all duration-500"
             initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, y: 0 }}   // ✅ animate immediately
+            transition={{ duration: 0.8, ease: 'easeOut' }}
           >
             <div className="flex flex-col md:flex-row items-center gap-8">
               {/* Profile Image */}
               <motion.img
-                src={profile.photo || '/assets/placeholder.jpg'}
+                src={profile.photo || '/profile.jpg'} // ✅ use public/profile.jpg fallback
                 alt="profile"
                 className="w-44 h-44 rounded-full object-cover border-4 border-sky-200 dark:border-sky-600"
                 initial={{ scale: 0.8, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
+                animate={{ scale: 1, opacity: 1 }}   // ✅ animate on mount
                 transition={{ duration: 0.8, ease: 'easeOut' }}
               />
 
@@ -52,7 +52,7 @@ export default function About() {
               <motion.div
                 className="flex-1"
                 initial={{ x: -50, opacity: 0 }}
-                whileInView={{ x: 0, opacity: 1 }}
+                animate={{ x: 0, opacity: 1 }}   // ✅ animate immediately
                 transition={{ duration: 0.8, ease: 'easeOut' }}
               >
                 <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-500">
@@ -122,7 +122,7 @@ export default function About() {
                       href={profile.twitter}
                       target="_blank"
                       rel="noreferrer"
-                      className="hover:text-blue-400 dark:hover:text-sky-300 transition"
+                      className="hover:text-sky-500 transition"
                     >
                       <FaTwitter />
                     </a>
