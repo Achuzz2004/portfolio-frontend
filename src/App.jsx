@@ -158,7 +158,7 @@ function App() {
 
 
 
-        <motion.section
+        <section
 
           id="projects"
 
@@ -176,7 +176,7 @@ function App() {
 
           <Projects />
 
-        </motion.section>
+        </section>
 
       </main>
 
