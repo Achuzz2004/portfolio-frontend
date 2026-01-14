@@ -23,8 +23,8 @@ export default function Projects() {
   const defaultImage = 'https://via.placeholder.com/300';
 
   return (
-    /* w-full and overflow-hidden ensures background stays full width */
-    <div className="w-full overflow-hidden space-y-8 px-4 md:px-8 lg:px-16 py-12">
+    /* Removed overflow-x issues by keeping width contained */
+    <div className="w-full max-w-full overflow-x-hidden space-y-8 px-4 md:px-8 lg:px-16 py-12">
       {/* Heading */}
       <h2 className="text-3xl md:text-4xl font-bold mb-6 
                      bg-clip-text text-transparent 
@@ -36,9 +36,9 @@ export default function Projects() {
       {/* Empty State */}
       {projects.length === 0 ? (
         <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
           className="text-gray-500 dark:text-gray-400 text-center 
                      bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 
                      p-6 rounded-xl shadow-md"
@@ -46,21 +46,23 @@ export default function Projects() {
           No projects available at the moment.
         </motion.div>
       ) : (
-        /* The Grid: No horizontal movement here means no scrollbar issues */
+        /* Grid Container */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((p, index) => (
             <motion.div
               key={p.id}
-              /* Simplified Animation: Scale and Fade only */
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, amount: 0.2 }}
+              /* REMOVED: x: -100 / 100 and scale: 0.95 */
+              /* ADDED: Simple opacity and slight y-axis lift */
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ 
                 duration: 0.5, 
                 ease: 'easeOut', 
                 delay: index * 0.1 
               }}
-              className="hover:scale-105 hover:shadow-xl transition-transform duration-500"
+              /* The hover effect is kept as it happens within the card's bounds */
+              className="hover:scale-105 transition-transform duration-500"
             >
               <ProjectCard
                 project={{
