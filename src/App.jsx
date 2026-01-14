@@ -18,24 +18,25 @@ const sectionVariants = {
 
 function App() {
   return (
-    <div className="scroll-smooth bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-500">
+    /* Added w-full and overflow-x-hidden to prevent horizontal gaps */
+    <div className="w-full min-h-screen overflow-x-hidden scroll-smooth bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-500">
       <Navbar />
 
-      <main className="pt-20">
+      <main className="pt-20 w-full">
         <motion.section
           id="home"
-          className="min-h-screen flex items-center justify-center"
+          className="w-full min-h-screen flex items-center justify-center"
           initial="hidden"
           whileInView="visible"
           variants={sectionVariants}
-          viewport={{ once: false, amount: 0.3 }} // triggers animation every time
+          viewport={{ once: false, amount: 0.3 }}
         >
           <Home />
         </motion.section>
 
         <motion.section
           id="about"
-          className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800"
+          className="w-full min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800"
           initial="hidden"
           whileInView="visible"
           variants={sectionVariants}
@@ -46,7 +47,7 @@ function App() {
 
         <motion.section
           id="skills"
-          className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-700"
+          className="w-full min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-700"
           initial="hidden"
           whileInView="visible"
           variants={sectionVariants}
@@ -57,7 +58,7 @@ function App() {
 
         <motion.section
           id="education"
-          className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800"
+          className="w-full min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800"
           initial="hidden"
           whileInView="visible"
           variants={sectionVariants}
@@ -68,7 +69,7 @@ function App() {
 
         <motion.section
           id="experience"
-          className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-700"
+          className="w-full min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-700"
           initial="hidden"
           whileInView="visible"
           variants={sectionVariants}
@@ -79,7 +80,7 @@ function App() {
 
         <motion.section
           id="projects"
-          className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800"
+          className="w-full min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800"
           initial="hidden"
           whileInView="visible"
           variants={sectionVariants}
