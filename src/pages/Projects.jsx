@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api/api';
 import ProjectCard from '../components/ProjectCard';
+import Loader from '../components/Loader';
+import { motion } from 'framer-motion';
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
@@ -16,53 +18,43 @@ export default function Projects() {
       .finally(() => setLoading(false));
   }, []);
 
-  const defaultImage = 'https://via.placeholder.com/300';
+  if (loading) return <Loader />;
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-12 px-4 md:px-8 lg:px-16 py-16">
-      {/* Modern Minimalist Heading */}
-      <div className="text-center space-y-2">
-        <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-          Featured Projects
-        </h2>
-        <div className="h-1 w-20 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full" />
-      </div>
+    /* Added overflow-hidden and w-full */
+    <div className="w-full overflow-hidden space-y-8 px-4 md:px-8 lg:px-16 py-12">
+      <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
+        Projects
+      </h2>
 
-      {loading ? (
-        /* Clean Skeleton Grid while backend is loading */
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[1, 2, 3].map((n) => (
-            <div key={n} className="h-80 bg-gray-100 dark:bg-gray-800 rounded-2xl animate-pulse" />
-          ))}
-        </div>
-      ) : projects.length === 0 ? (
-        /* Minimalist Empty State */
-        <div className="text-center py-20 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-3xl">
-          <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">
-            No projects found. Check back later!
-          </p>
-        </div>
+      {projects.length === 0 ? (
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-gray-500 dark:text-gray-400 text-center bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-6 rounded-xl shadow-md"
+        >
+          No projects available at the moment.
+        </motion.div>
       ) : (
-        /* Professional Grid without horizontal motion */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((p) => (
-            <div
+          {projects.map((p, index) => (
+            <motion.div
               key={p.id}
-              className="group transform transition-all duration-300 hover:-translate-y-2"
+              /* Reducing x offset slightly to prevent extreme overflow */
+              initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              className="hover:scale-105 transition-transform duration-500"
             >
               <ProjectCard
                 project={{
-                  title: p.title,
-                  description: p.description,
-                  technologies: p.technologies
-                    ? p.technologies.split(',').map(t => t.trim()).filter(Boolean)
-                    : [],
-                  github: p.github_url || null,
-                  demo: p.demo_url || null,
-                  image: p.image || defaultImage,
+                  ...p,
+                  technologies: p.technologies ? p.technologies.split(',').map(t => t.trim()) : [],
+                  image: p.image || 'https://via.placeholder.com/300',
                 }}
               />
-            </div>
+            </motion.div>
           ))}
         </div>
       )}
