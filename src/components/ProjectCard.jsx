@@ -11,41 +11,42 @@ export default function ProjectCard({ project }) {
                  border rounded-2xl shadow-lg overflow-hidden
                  hover:shadow-2xl transition-all duration-500
                  flex flex-col h-full"
-      initial={{ opacity: 0, y: 40, scale: 0.95 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
       whileHover={{ y: -8 }}
     >
       {/* IMAGE */}
       <div className="relative h-52 overflow-hidden group">
-        <motion.img
-          src={project.image || "/assets/placeholder.jpg"}
+        <img
+          src={project.image}
           alt={project.title}
           className="w-full h-full object-cover"
         />
 
-        {/* Dark Overlay */}
+        {/* DARK OVERLAY */}
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition" />
 
-        {/* Buttons */}
+        {/* BUTTONS */}
         <div className="absolute bottom-3 right-3 z-10 flex gap-2 opacity-0 group-hover:opacity-100 transition">
           {project.github && (
             <a
               href={project.github}
               target="_blank"
               rel="noreferrer"
-              className="px-3 py-1 text-xs rounded-lg bg-black/80 text-white backdrop-blur hover:scale-105 transition"
+              className="px-3 py-1 text-xs rounded-lg 
+                         bg-black/80 text-white backdrop-blur
+                         hover:scale-105 transition"
             >
               GitHub
             </a>
           )}
+
           {project.demo && (
             <a
               href={project.demo}
               target="_blank"
               rel="noreferrer"
-              className="px-3 py-1 text-xs rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:scale-105 transition"
+              className="px-3 py-1 text-xs rounded-lg 
+                         bg-gradient-to-r from-pink-500 to-purple-600 
+                         text-white hover:scale-105 transition"
             >
               Demo
             </a>
@@ -59,13 +60,15 @@ export default function ProjectCard({ project }) {
           {project.title}
         </h3>
 
-        <p
-          className={`text-sm text-gray-600 dark:text-gray-400 mt-2 leading-relaxed transition-all ${
-            expanded ? "" : "line-clamp-3"
-          }`}
+        {/* DESCRIPTION */}
+        <motion.p
+          initial={false}
+          animate={{ maxHeight: expanded ? 500 : 72 }}
+          transition={{ duration: 0.3 }}
+          className="overflow-hidden text-sm text-gray-600 dark:text-gray-400 mt-2 leading-relaxed"
         >
           {project.description}
-        </p>
+        </motion.p>
 
         {project.description?.length > 120 && (
           <button
@@ -78,7 +81,7 @@ export default function ProjectCard({ project }) {
 
         {/* TECH STACK */}
         <div className="mt-auto pt-4 flex flex-wrap gap-2">
-          {project.technologies?.map((tech, idx) => (
+          {project.technologies.map((tech, idx) => (
             <span
               key={idx}
               className="text-xs px-3 py-1 rounded-full text-white
