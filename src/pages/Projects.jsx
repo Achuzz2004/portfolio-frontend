@@ -38,15 +38,16 @@ export default function Projects() {
         </motion.div>
       ) : (
         <div
-          className="
-            grid gap-6 sm:gap-8
-            grid-cols-1
-            sm:grid-cols-2
-            lg:grid-cols-3
-            xl:grid-cols-4
-            auto-rows-fr
-          "
-        >
+  className="
+    grid gap-6 sm:gap-8
+    grid-cols-1
+    sm:grid-cols-2
+    lg:grid-cols-3
+    auto-rows-fr
+    max-w-7xl mx-auto
+  "
+>
+
           {projects.map((p, index) => (
             <motion.div
               key={p.id}
