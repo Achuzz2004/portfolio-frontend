@@ -1,82 +1,93 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 
 export default function ProjectCard({ project }) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <motion.div
       className="bg-gradient-to-r from-purple-50 via-pink-50 to-yellow-50 
                  dark:from-gray-900 dark:via-gray-800 dark:to-gray-900
-                 border rounded-2xl shadow-lg overflow-hidden 
-                 hover:shadow-2xl transition-transform duration-500"
+                 border rounded-2xl shadow-lg overflow-hidden
+                 hover:shadow-2xl transition-all duration-500
+                 flex flex-col h-full"
       initial={{ opacity: 0, y: 40, scale: 0.95 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       whileHover={{ y: -8 }}
     >
-      {/* Image Section */}
-      <div className="relative overflow-hidden">
+      {/* IMAGE */}
+      <div className="relative h-52 overflow-hidden group">
         <motion.img
           src={project.image || "/assets/placeholder.jpg"}
           alt={project.title}
-          className="w-full h-52 object-cover transform transition duration-500 hover:scale-110"
-          whileHover={{ scale: 1.1 }}
+          className="w-full h-full object-cover"
         />
 
-        {/* GitHub & Demo Buttons */}
-        <div className="absolute bottom-3 right-3 flex gap-3">
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition" />
+
+        {/* Buttons */}
+        <div className="absolute bottom-3 right-3 z-10 flex gap-2 opacity-0 group-hover:opacity-100 transition">
           {project.github && (
-            <motion.a
+            <a
               href={project.github}
               target="_blank"
               rel="noreferrer"
-              className="px-3 py-1 bg-gray-800 text-white text-xs rounded-lg hover:bg-gray-700 shadow"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              className="px-3 py-1 text-xs rounded-lg bg-black/80 text-white backdrop-blur hover:scale-105 transition"
             >
               GitHub
-            </motion.a>
+            </a>
           )}
           {project.demo && (
-            <motion.a
+            <a
               href={project.demo}
               target="_blank"
               rel="noreferrer"
-              className="px-3 py-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs rounded-lg shadow hover:opacity-90"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              className="px-3 py-1 text-xs rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:scale-105 transition"
             >
               Demo
-            </motion.a>
+            </a>
           )}
         </div>
       </div>
 
-      {/* Project Details */}
-      <div className="p-5">
+      {/* CONTENT */}
+      <div className="p-5 flex flex-col flex-grow">
         <h3 className="font-bold text-xl bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
           {project.title}
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">
+
+        <p
+          className={`text-sm text-gray-600 dark:text-gray-400 mt-2 leading-relaxed transition-all ${
+            expanded ? "" : "line-clamp-3"
+          }`}
+        >
           {project.description}
         </p>
 
-        {/* Technologies */}
-        {project.technologies && project.technologies.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {project.technologies.map((tech, idx) => (
-              <motion.span
-                key={idx}
-                className="text-xs px-3 py-1 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white rounded-full font-medium shadow"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-              >
-                {tech}
-              </motion.span>
-            ))}
-          </div>
+        {project.description?.length > 120 && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="text-xs text-pink-500 mt-1 self-start hover:underline"
+          >
+            {expanded ? "Read less" : "Read more"}
+          </button>
         )}
+
+        {/* TECH STACK */}
+        <div className="mt-auto pt-4 flex flex-wrap gap-2">
+          {project.technologies?.map((tech, idx) => (
+            <span
+              key={idx}
+              className="text-xs px-3 py-1 rounded-full text-white
+                         bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 shadow"
+            >
+              {tech}
+            </span>
+          ))}
+        </div>
       </div>
     </motion.div>
   );
