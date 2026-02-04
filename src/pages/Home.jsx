@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../api/api';
 import Loader from '../components/Loader';
 import { motion } from 'framer-motion';
-import { FaGithub, FaLinkedin, FaTwitter, FaMapMarkerAlt, FaEnvelope, FaPhone } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaTwitter, FaMapMarkerAlt, FaEnvelope, FaPhone, FaDownload } from 'react-icons/fa';
 
 export default function Home() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Your specific Google Drive File ID extracted from your link
+  const RESUME_DOWNLOAD_URL = "https://drive.google.com/uc?export=download&id=1a_Yhuiz2AQprnIjQVAUPLFdCpY_ZLUJe";
 
   useEffect(() => {
     api.getProfile()
@@ -23,13 +26,12 @@ export default function Home() {
         
         {/* Profile Card */}
         <motion.div 
-          className="lg:col-span-4 sticky top-24 flex flex-col items-center p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm"
+          className="lg:col-span-4 lg:sticky lg:top-24 flex flex-col items-center p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
           <div className="relative group">
-            {/* Animated Glow behind image */}
             <div className="absolute -inset-1 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
             <img 
               src={profile?.photo || 'https://via.placeholder.com/150'} 
@@ -38,13 +40,26 @@ export default function Home() {
             />
           </div>
 
-          <h1 className="mt-8 text-3xl font-black tracking-tight text-gray-900 dark:text-white">
+          <h1 className="mt-8 text-3xl font-black tracking-tight text-gray-900 dark:text-white text-center">
             {profile?.name || 'Anonymous'}
           </h1>
           
           <p className="mt-3 text-sm font-medium px-4 py-1.5 rounded-full bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-800/30">
             {profile?.headline || 'Creative Developer'}
           </p>
+
+          {/* New: Resume Download Button */}
+          <motion.a
+            href={RESUME_DOWNLOAD_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white text-sm font-bold shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 transition-all"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FaDownload size={14} />
+            Download CV
+          </motion.a>
           
           <div className="mt-8 flex gap-6 text-gray-400 dark:text-gray-500">
             {profile?.github && <a href={profile.github} target="_blank" rel="noreferrer" className="hover:text-pink-500 transition-colors"><FaGithub size={22} /></a>}
@@ -55,8 +70,6 @@ export default function Home() {
 
         {/* About & Info */}
         <div className="lg:col-span-8 space-y-8">
-          
-          {/* About Section */}
           <motion.div 
             className="p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm"
             initial={{ opacity: 0, x: 20 }}
@@ -72,7 +85,6 @@ export default function Home() {
             </p>
           </motion.div>
 
-          {/* Contact Details Grid */}
           <div className="grid sm:grid-cols-2 gap-6">
             <motion.div 
               className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm"
@@ -101,7 +113,6 @@ export default function Home() {
             </motion.div>
           </div>
         </div>
-
       </div>
     </div>
   );
