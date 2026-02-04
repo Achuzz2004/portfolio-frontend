@@ -58,7 +58,7 @@ export default function Home() {
             whileTap={{ scale: 0.95 }}
           >
             <FaDownload size={14} />
-            Download CV
+            Resume
           </motion.a>
           
           <div className="mt-8 flex gap-6 text-gray-400 dark:text-gray-500">
