@@ -18,74 +18,90 @@ export default function Home() {
   if (loading) return <Loader />;
 
   return (
-    /* Added overflow-hidden to contain animations */
-    <div className="w-full overflow-hidden grid md:grid-cols-3 gap-8 items-start px-4 md:px-8 lg:px-16 py-12">
-      
-      {/* Profile Card */}
-      <motion.div 
-        className="col-span-1 bg-gradient-to-r from-purple-50 via-pink-50 to-yellow-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 border rounded-2xl shadow-xl p-8 text-center"
-        initial={{ opacity: 0, x: -50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
-        <motion.img 
-          src={profile?.photo || 'https://via.placeholder.com/150'} 
-          alt="profile" 
-          className="w-40 h-40 rounded-full mx-auto object-cover border-4 border-pink-200"
-          initial={{ scale: 0.8, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        />
-        <h1 className="mt-6 text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-500">
-          {profile?.name || 'Anonymous'}
-        </h1>
-        <p className="mt-2 text-slate-600 dark:text-slate-300">{profile?.headline || 'No headline available.'}</p>
+    <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 lg:py-24">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         
-        <div className="mt-4 flex justify-center gap-4 text-xl text-gray-700 dark:text-gray-300">
-          {profile?.github && <a href={profile.github} target="_blank" rel="noreferrer" className="hover:text-black dark:hover:text-white"><FaGithub /></a>}
-          {profile?.linkedin && <a href={profile.linkedin} target="_blank" rel="noreferrer" className="hover:text-blue-700"><FaLinkedin /></a>}
-          {profile?.twitter && <a href={profile.twitter} target="_blank" rel="noreferrer" className="hover:text-blue-400"><FaTwitter /></a>}
-        </div>
-      </motion.div>
-
-      {/* About & Contact */}
-      <div className="md:col-span-2 space-y-6">
+        {/* Profile Card */}
         <motion.div 
-          className="bg-gradient-to-r from-blue-50 via-green-50 to-teal-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 border rounded-2xl shadow-xl p-6"
-          initial={{ opacity: 0, x: 50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          className="lg:col-span-4 sticky top-24 flex flex-col items-center p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">About</h2>
-          <p className="mt-4 text-slate-700 dark:text-slate-300">{profile?.bio || 'No bio available.'}</p>
+          <div className="relative group">
+            {/* Animated Glow behind image */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+            <img 
+              src={profile?.photo || 'https://via.placeholder.com/150'} 
+              alt="profile" 
+              className="relative w-44 h-44 rounded-full object-cover border-2 border-white dark:border-gray-900 shadow-xl"
+            />
+          </div>
+
+          <h1 className="mt-8 text-3xl font-black tracking-tight text-gray-900 dark:text-white">
+            {profile?.name || 'Anonymous'}
+          </h1>
+          
+          <p className="mt-3 text-sm font-medium px-4 py-1.5 rounded-full bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-800/30">
+            {profile?.headline || 'Creative Developer'}
+          </p>
+          
+          <div className="mt-8 flex gap-6 text-gray-400 dark:text-gray-500">
+            {profile?.github && <a href={profile.github} target="_blank" rel="noreferrer" className="hover:text-pink-500 transition-colors"><FaGithub size={22} /></a>}
+            {profile?.linkedin && <a href={profile.linkedin} target="_blank" rel="noreferrer" className="hover:text-purple-500 transition-colors"><FaLinkedin size={22} /></a>}
+            {profile?.twitter && <a href={profile.twitter} target="_blank" rel="noreferrer" className="hover:text-blue-500 transition-colors"><FaTwitter size={22} /></a>}
+          </div>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        {/* About & Info */}
+        <div className="lg:col-span-8 space-y-8">
+          
+          {/* About Section */}
           <motion.div 
-            className="bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 border rounded-2xl shadow-xl p-4"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            className="p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Contact</h3>
-            {profile?.email ? <p className="flex items-center gap-2 text-sm"><FaEnvelope /> {profile.email}</p> : <p className="text-sm text-gray-500">No email provided.</p>}
-            {profile?.phone ? <p className="flex items-center gap-2 text-sm"><FaPhone /> {profile.phone}</p> : <p className="text-sm text-gray-500">No phone provided.</p>}
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+              <span className="w-8 h-[2px] bg-gradient-to-r from-pink-500 to-purple-500"></span>
+              About Me
+            </h2>
+            <p className="text-lg leading-relaxed text-gray-600 dark:text-gray-300 font-light italic">
+              "{profile?.bio || 'Crafting digital experiences with precision and passion.'}"
+            </p>
           </motion.div>
 
-          <motion.div 
-            className="bg-gradient-to-r from-yellow-50 via-orange-50 to-red-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 border rounded-2xl shadow-xl p-4"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Location</h3>
-            <p className="flex items-center gap-2 text-sm"><FaMapMarkerAlt /> {profile?.location || 'Not specified'}</p>
-          </motion.div>
+          {/* Contact Details Grid */}
+          <div className="grid sm:grid-cols-2 gap-6">
+            <motion.div 
+              className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Contact</h3>
+              <div className="space-y-3 text-gray-600 dark:text-gray-300">
+                {profile?.email && <p className="flex items-center gap-3 text-sm hover:text-purple-500 transition-colors cursor-pointer"><FaEnvelope className="text-pink-500" /> {profile.email}</p>}
+                {profile?.phone && <p className="flex items-center gap-3 text-sm hover:text-purple-500 transition-colors cursor-pointer"><FaPhone className="text-purple-500" /> {profile.phone}</p>}
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+            >
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Location</h3>
+              <p className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                <FaMapMarkerAlt className="text-blue-500" /> 
+                {profile?.location || 'San Francisco, CA'}
+              </p>
+            </motion.div>
+          </div>
         </div>
+
       </div>
     </div>
   );
