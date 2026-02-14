@@ -1,38 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import { api } from '../api/api';
-import Loader from '../components/Loader';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
 
-function SkillStars({ name, level, tags }) {
-  const rating = level / 20;
+function SkillItem({ name, level, tags, index }) {
+  // Convert 0-100 level to star rating (5 stars max)
+  const starRating = level / 20; // 0-5 scale
 
   return (
-    <div className="group flex flex-col p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:border-purple-200 dark:hover:border-purple-900/50 transition-all duration-300">
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-sm font-bold tracking-tight text-gray-800 dark:text-gray-100">
-          {name}
-        </span>
-
-        {/* Star Container */}
-        <div className="flex gap-1">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1 }}
+      className="group relative flex flex-col py-6 border-b border-white/5 hover:border-red-600/30 transition-colors duration-500"
+    >
+      <div className="flex justify-between items-end mb-3">
+        <div className="space-y-1">
+          <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-500 font-bold block">
+            Skill_Node
+          </span>
+          <h3 className="text-xl sm:text-2xl font-black text-white uppercase italic tracking-tighter group-hover:text-red-500 transition-colors">
+            {name}
+          </h3>
+        </div>
+        
+        {/* Star Rating - Replaced percentage */}
+        <div className="flex gap-0.5 items-center">
           {[...Array(5)].map((_, i) => {
-            const isFull = i + 1 <= Math.floor(rating);
-            const isHalf = !isFull && i < rating;
+            const isFull = i + 1 <= Math.floor(starRating);
+            const isHalf = !isFull && i < starRating;
 
             return (
-              <div key={i} className="relative w-4 h-4">
-                <Star className="absolute inset-0 w-full h-full text-gray-200 dark:text-gray-700 fill-gray-100 dark:fill-gray-800" strokeWidth={1} />
-                
+              <div key={i} className="relative w-3.5 h-3.5 sm:w-4 sm:h-4">
+                <Star className="absolute inset-0 w-full h-full text-zinc-700 fill-transparent" strokeWidth={1.5} />
                 <motion.div
                   className="absolute inset-0 overflow-hidden"
                   initial={{ width: 0 }}
                   whileInView={{ width: isFull ? "100%" : isHalf ? "50%" : "0%" }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
+                  transition={{ delay: i * 0.05, duration: 0.5 }}
                 >
-                  {/* Matching the pink-purple-blue theme */}
-                  <Star className="w-4 h-4 text-purple-500 fill-purple-500" strokeWidth={1} />
+                  <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500 fill-red-500" strokeWidth={1.5} />
                 </motion.div>
               </div>
             );
@@ -40,63 +47,73 @@ function SkillStars({ name, level, tags }) {
         </div>
       </div>
 
-      {/* Themed Tags */}
+      {/* Modern Minimalist Progress Bar */}
+      <div className="relative h-[2px] w-full bg-zinc-800/50 rounded-full overflow-hidden mb-4">
+        <motion.div
+          initial={{ width: 0 }}
+          whileInView={{ width: `${level}%` }}
+          transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+          className="absolute h-full bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]"
+        />
+      </div>
+
+      {/* Clean Tag System */}
       {tags && tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-auto">
+        <div className="flex flex-wrap gap-2">
           {tags.map((tag, i) => (
-            <span key={i} className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 border border-pink-100 dark:border-pink-800/30">
+            <span 
+              key={i} 
+              className="text-[9px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full bg-white/5 text-zinc-400 border border-white/5 group-hover:border-red-600/20 group-hover:text-zinc-300 transition-all"
+            >
               {tag}
             </span>
           ))}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
-export default function Skills() {
-  const [skills, setSkills] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    api.getSkills()
-      .then(data => setSkills(data.results || []))
-      .catch(() => setSkills([]))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) return <Loader />;
+export default function Skills({ skills }) {
+  if (!skills || skills.length === 0) return null;
 
   return (
-    <section className="max-w-6xl mx-auto px-6 py-20">
-      <div className="flex flex-col items-center mb-16 text-center">
-        <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500">
-            Skills & Mastery
-          </span>
-        </h2>
-        <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto text-sm">
-          A quantitative breakdown of my technical toolkit and proficiency levels.
-        </p>
-      </div>
+    <section id="skills" className="relative w-full py-24 bg-transparent">
+      <div className="max-w-6xl mx-auto px-6">
+        
+        {/* Section Header */}
+        <div className="mb-20 text-center lg:text-left">
+          <div className="flex items-center justify-center lg:justify-start gap-3 mb-4">
+            <div className="h-px w-8 bg-red-600" />
+            <span className="text-red-600 font-mono text-xs uppercase tracking-[0.4em] font-bold">
+              Capabilities
+            </span>
+          </div>
+          <h2 className="text-5xl sm:text-7xl font-black text-white italic tracking-tighter uppercase drop-shadow-2xl">
+            Technical <span className="text-red-600">Arsenal</span>
+          </h2>
+        </div>
 
-      {skills.length === 0 ? (
-        <p className="text-center text-gray-400">No skills found.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Responsive Grid with increased gap for big screens */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 lg:gap-x-16 xl:gap-x-24 gap-y-4">
           {skills.map((s, index) => (
-            <motion.div
-              key={s.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.05 }}
-            >
-              <SkillStars name={s.name} level={s.level} tags={s.tags} />
-            </motion.div>
+            <SkillItem 
+              key={s.id || index} 
+              name={s.name} 
+              level={s.level} 
+              tags={s.tags} 
+              index={index}
+            />
           ))}
         </div>
-      )}
+
+        {/* Center gap note - subtle hint */}
+        <div className="text-center mt-8 md:hidden">
+          <span className="text-[8px] uppercase tracking-[0.3em] text-zinc-700 font-mono">
+            scroll for more
+          </span>
+        </div>
+      </div>
     </section>
   );
 }

@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { api } from '../api/api';
-import Loader from '../components/Loader';
+import React from 'react';
 import { motion } from 'framer-motion';
 import {
   FaGithub,
@@ -12,125 +10,142 @@ import {
   FaPhone
 } from 'react-icons/fa';
 
-export default function About() {
-  const [profiles, setProfiles] = useState(null);
-
-  useEffect(() => {
-    api.getProfile()
-      .then(data => setProfiles(data.results))
-      .catch(() => {});
-  }, []);
-
-  if (!profiles) return <Loader />;
+export default function About({ profile }) {
+  if (!profile) return null;
 
   return (
-    <div className="space-y-12 px-4 md:px-8 lg:px-16 py-12">
-      {profiles.map((profile) => (
+    <section id="about" className="relative w-full py-16">
+      <div className="max-w-6xl mx-auto px-4 md:px-8">
         <motion.div
-          key={profile.id}
-          className="bg-gradient-to-r from-purple-50 via-pink-50 to-yellow-50 
-                     dark:from-gray-800 dark:via-gray-900 dark:to-gray-800
-                     border rounded-2xl shadow-xl p-8 
-                     hover:scale-105 hover:shadow-2xl transition-all duration-500"
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16"
         >
-          <div className="flex flex-col md:flex-row items-center gap-8">
-            {/* Profile Image */}
-            <motion.img
-              src={profile.photo || '/assets/placeholder.jpg'}
-              alt="profile"
-              className="w-44 h-44 rounded-full object-cover border-4 border-sky-200 dark:border-sky-600"
-              initial={{ scale: 0.8, opacity: 0 }}
+          
+          {/* LEFT: Portrait with connect section below */}
+          <div className="relative shrink-0 flex flex-col items-center">
+            {/* Portrait */}
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-            />
-
-            {/* Profile Info */}
-            <motion.div
-              className="flex-1"
-              initial={{ x: -50, opacity: 0 }}
-              whileInView={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
+              transition={{ duration: 0.6 }}
+              className="relative w-48 h-48 sm:w-56 sm:h-56 lg:w-64 lg:h-64"
             >
-              <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-500">
-                {profile.name}
-              </h2>
-              <p className="mt-2 text-lg font-medium text-gray-600 dark:text-gray-300">
-                {profile.headline}
-              </p>
-              <p className="mt-4 text-slate-700 dark:text-gray-300">{profile.bio}</p>
-
-              {/* Contact Info */}
-              <div className="mt-6 space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                {profile.email && (
-                  <p className="flex items-center gap-2">
-                    <FaEnvelope className="text-pink-500" /> {profile.email}
-                  </p>
-                )}
-                {profile.phone && (
-                  <p className="flex items-center gap-2">
-                    <FaPhone className="text-purple-500" /> {profile.phone}
-                  </p>
-                )}
-                {profile.website && (
-                  <p className="flex items-center gap-2">
-                    <FaGlobe className="text-blue-500" />
-                    <a
-                      href={profile.website}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="underline hover:text-blue-600 dark:hover:text-blue-400"
-                    >
-                      {profile.website}
-                    </a>
-                  </p>
-                )}
-                {profile.location && (
-                  <p className="flex items-center gap-2">
-                    <FaMapMarkerAlt className="text-red-500" /> {profile.location}
-                  </p>
-                )}
+              {/* Gradient ring */}
+              <div className="absolute -inset-0.5 bg-gradient-to-tr from-red-600 to-zinc-600 rounded-full opacity-30 blur-[2px]" />
+              
+              <div className="relative w-full h-full rounded-full overflow-hidden border border-white/10">
+                <img
+                  src={profile.photo || '/assets/placeholder.jpg'}
+                  alt={profile.name}
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                />
               </div>
+            </motion.div>
 
-              {/* Social Links */}
-              <div className="flex gap-4 mt-4 text-2xl">
-                {profile.github && (
-                  <a
-                    href={profile.github}
+            {/* Connect Section - Moved under profile pic */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="mt-6 text-center"
+            >
+              <p className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Connect</p>
+              <div className="flex items-center justify-center gap-3">
+                {[
+                  { icon: <FaGithub />, link: profile.github, label: "GitHub" },
+                  { icon: <FaLinkedin />, link: profile.linkedin, label: "LinkedIn" },
+                  { icon: <FaTwitter />, link: profile.twitter, label: "Twitter" }
+                ].map((social, i) => social.link && (
+                  <motion.a
+                    key={i}
+                    href={social.link}
                     target="_blank"
                     rel="noreferrer"
-                    className="hover:text-gray-900 dark:hover:text-white transition"
+                    whileHover={{ y: -2 }}
+                    className="w-8 h-8 rounded-full bg-zinc-800/50 flex items-center justify-center text-zinc-400 hover:text-red-400 hover:bg-zinc-800 transition-all duration-300"
+                    title={social.label}
                   >
-                    <FaGithub />
-                  </a>
-                )}
-                {profile.linkedin && (
-                  <a
-                    href={profile.linkedin}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-blue-700 dark:hover:text-blue-400 transition"
-                  >
-                    <FaLinkedin />
-                  </a>
-                )}
-                {profile.twitter && (
-                  <a
-                    href={profile.twitter}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-blue-400 dark:hover:text-sky-300 transition"
-                  >
-                    <FaTwitter />
-                  </a>
-                )}
+                    {social.icon}
+                  </motion.a>
+                ))}
               </div>
             </motion.div>
           </div>
+
+          {/* RIGHT: Content - No cards, clean background */}
+          <div className="flex-1 text-center lg:text-left">
+            <motion.div
+              initial={{ x: 20, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              {/* Section label */}
+              <div className="flex items-center justify-center lg:justify-start gap-3 mb-4">
+                <div className="h-px w-8 bg-red-600/50" />
+                <h4 className="text-red-600 font-medium tracking-[0.2em] uppercase text-[10px]">
+                  ABOUT
+                </h4>
+              </div>
+              
+              {/* Name */}
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">
+                <span className="text-red-500">{profile.name}</span>
+              </h2>
+
+              {/* Headline */}
+              <p className="text-zinc-400 text-sm sm:text-base font-light mb-3">
+                {profile.headline}
+              </p>
+
+              {/* Bio - With subtle blur background for better readability */}
+              <div className="relative mb-6 max-w-xl mx-auto lg:mx-0">
+                {/* Blur background layer */}
+                <div className="absolute inset-0 bg-black/80 backdrop-blur-[5px] rounded-lg -m-2 p-2" />
+                
+                {/* Bio text */}
+                <p className="relative text-zinc-100 text-sm sm:text-base leading-relaxed">
+                  {profile.bio}
+                </p>
+              </div>
+
+              {/* Info Grid - Clean, no cards */}
+              <div className="grid grid-cols-2 gap-x-6 gap-y-3 py-4 border-t border-white/5 text-sm">
+                {[
+                  { icon: <FaEnvelope className="text-red-500 text-xs" />, label: "Email", value: profile.email, link: `mailto:${profile.email}` },
+                  { icon: <FaMapMarkerAlt className="text-red-500 text-xs" />, label: "Location", value: profile.location },
+                  { icon: <FaPhone className="text-red-500 text-xs" />, label: "Phone", value: profile.phone, link: `tel:${profile.phone}` },
+                  { icon: <FaGlobe className="text-red-500 text-xs" />, label: "Website", value: profile.website || "Available", link: profile.website }
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-zinc-800/50 flex items-center justify-center shrink-0">
+                      {item.icon}
+                    </div>
+                    <div className="text-left min-w-0">
+                      <p className="text-[8px] uppercase tracking-wider text-zinc-500">{item.label}</p>
+                      {item.link ? (
+                        <a 
+                          href={item.link} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          className="text-xs text-zinc-300 hover:text-red-400 transition-colors block truncate max-w-[120px]"
+                        >
+                          {item.value}
+                        </a>
+                      ) : (
+                        <span className="text-xs text-zinc-300 block truncate max-w-[120px]">{item.value}</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
         </motion.div>
-      ))}
-    </div>
+      </div>
+    </section>
   );
 }
