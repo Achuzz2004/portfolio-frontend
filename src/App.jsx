@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+Import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { api } from "./api/api";
 
@@ -18,7 +18,6 @@ import Education from "./pages/Education";
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [data, setData] = useState({
     profile: null,
     skills: [],
@@ -28,13 +27,6 @@ function App() {
   });
 
   useEffect(() => {
-    // 1. Precise Mobile Detection
-    const checkDevice = () => {
-      setIsMobile(window.innerWidth < 1024 || navigator.maxTouchPoints > 0);
-    };
-    checkDevice();
-    window.addEventListener("resize", checkDevice);
-
     const fetchPortfolioData = async () => {
       try {
         const [profileRes, skillsRes, projectsRes, expRes, eduRes] = await Promise.all([
@@ -62,7 +54,6 @@ function App() {
 
     fetchPortfolioData();
 
-    // 2. Load Spline Script (standard module)
     const scriptId = "spline-viewer-script";
     if (!document.getElementById(scriptId)) {
       const script = document.createElement("script");
@@ -82,34 +73,32 @@ function App() {
       }, 4000);
       return () => clearTimeout(timer);
     }
-
-    return () => window.removeEventListener("resize", checkDevice);
   }, []);
 
   return (
     <div className="relative bg-black min-h-screen selection:bg-red-500 selection:text-white overflow-x-hidden">
 
-      {/* 🤖 HARD-OPTIMIZED 3D BACKGROUND */}
+      {/* 🤖 RESPONSIVE GLOBAL 3D BACKGROUND */}
       {!isLoading && dataLoaded && (
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-          <div className={`absolute top-0 left-0 w-full h-[calc(100%+70px)] ${isMobile ? 'scale-150' : 'scale-100'} origin-center`}>
+          {/* Scale Logic: 
+              We scale the model up on mobile (scale-150) so the robot stays 
+              prominent even on narrow screens, and reset to scale-100 on desktop.
+          */}
+          <div className="absolute top-0 left-0 w-full h-[calc(100%+70px)] scale-150 md:scale-100 origin-center transition-transform duration-1000">
             <spline-viewer 
               url="https://prod.spline.design/FEVuO6qGQJw8rWq8/scene.splinecode"
               style={{ width: '100%', height: '100%' }}
               events-target="global"
-              // Instead of 'hint', we use these targeted attributes:
-              loading="eager"
-              device-pixel-ratio={isMobile ? "1.0" : "auto"} // This is the single biggest lag-fix
-              unloadable="true" 
             ></spline-viewer>
           </div>
 
-          {/* Overlays */}
+          {/* Visual Overlays - Adjusted opacity for mobile visibility */}
           <div className="absolute inset-0 bg-black/40 md:bg-black/30 pointer-events-none" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.12)_0%,transparent_70%)] pointer-events-none" />
 
-          {/* Reduced Scanline complexity on mobile */}
-          <div className={`absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] z-[1] bg-[length:100%_4px] pointer-events-none ${isMobile ? 'opacity-30' : 'opacity-100'}`} />
+          {/* Scanline Effect - Subtle on mobile to prevent aliasing issues */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.01),rgba(0,255,0,0.01),rgba(0,0,255,0.01))] z-[1] bg-[length:100%_4px,3px_100%] pointer-events-none opacity-50 md:opacity-100" />
         </div>
       )}
 
@@ -134,10 +123,12 @@ function App() {
             <Navbar />
 
             <main className="w-full">
+              {/* Home Section - Full height */}
               <section id="home" className="min-h-screen">
                 <Home profile={data.profile} />
               </section>
 
+              {/* All sections now have transparent backgrounds and no borders */}
               <section id="about">
                 <About profile={data.profile} />
               </section>
@@ -164,10 +155,12 @@ function App() {
         )}
       </AnimatePresence>
 
+      {/* Global CSS for smoother mobile experience */}
       <style jsx global>{`
         html {
           scroll-behavior: smooth;
         }
+        /* Hide scrollbar but allow scrolling */
         ::-webkit-scrollbar {
           width: 0px;
           background: transparent;
@@ -175,28 +168,6 @@ function App() {
         body {
           -ms-overflow-style: none;
           scrollbar-width: none;
-          background-color: black;
-          /* Prevents overscroll 'rubber-banding' which jitters 3D scenes */
-          overscroll-behavior-y: none;
-        }
-
-        /* Essential for Mobile Performance */
-        spline-viewer {
-          /* Force hardware acceleration without changing visuals */
-          backface-visibility: hidden;
-          perspective: 1000;
-          transform: translate3d(0,0,0); 
-        }
-
-        /* Stop the browser from trying to track touch on 3D except where needed */
-        @media (max-width: 1024px) {
-          spline-viewer {
-            pointer-events: none;
-          }
-          /* Only allow the head to follow touch/scroll in the hero area */
-          #home {
-            pointer-events: auto;
-          }
         }
       `}</style>
     </div>
