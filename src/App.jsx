@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { api } from "./api/api";
 
@@ -18,7 +18,7 @@ import Education from "./pages/Education";
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [isMobile, setIsMobile] = useState(false); // New: Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
   const [data, setData] = useState({
     profile: null,
     skills: [],
@@ -28,12 +28,12 @@ function App() {
   });
 
   useEffect(() => {
-    // 1. Detect if the user is on mobile/tablet
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
+    // 1. Precise Mobile Detection
+    const checkDevice = () => {
+      setIsMobile(window.innerWidth < 1024 || navigator.maxTouchPoints > 0);
     };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
+    checkDevice();
+    window.addEventListener("resize", checkDevice);
 
     const fetchPortfolioData = async () => {
       try {
@@ -62,7 +62,7 @@ function App() {
 
     fetchPortfolioData();
 
-    // 2. Load Spline Script
+    // 2. Load Spline Script (standard module)
     const scriptId = "spline-viewer-script";
     if (!document.getElementById(scriptId)) {
       const script = document.createElement("script");
@@ -83,35 +83,33 @@ function App() {
       return () => clearTimeout(timer);
     }
 
-    return () => window.removeEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkDevice);
   }, []);
 
   return (
     <div className="relative bg-black min-h-screen selection:bg-red-500 selection:text-white overflow-x-hidden">
 
-      {/* 🤖 OPTIMIZED GLOBAL 3D BACKGROUND */}
+      {/* 🤖 HARD-OPTIMIZED 3D BACKGROUND */}
       {!isLoading && dataLoaded && (
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-          <div className={`absolute top-0 left-0 w-full h-[calc(100%+70px)] ${isMobile ? 'scale-150' : 'scale-100'} origin-center transition-transform duration-1000`}>
+          <div className={`absolute top-0 left-0 w-full h-[calc(100%+70px)] ${isMobile ? 'scale-150' : 'scale-100'} origin-center`}>
             <spline-viewer 
               url="https://prod.spline.design/FEVuO6qGQJw8rWq8/scene.splinecode"
               style={{ width: '100%', height: '100%' }}
               events-target="global"
-              // PERFORMANCE FIXES BELOW:
-              hint="speed"           // Prioritizes FPS over visual quality
-              loading-alt            // Shows a placeholder while loading
-              {...(isMobile && { 
-                "device-pixel-ratio": "1", // Forces standard resolution on high-DPI phones
-                "touch-move": "true"       // Ensures touch events are handled efficiently
-              })}
+              // Instead of 'hint', we use these targeted attributes:
+              loading="eager"
+              device-pixel-ratio={isMobile ? "1.0" : "auto"} // This is the single biggest lag-fix
+              unloadable="true" 
             ></spline-viewer>
           </div>
 
+          {/* Overlays */}
           <div className="absolute inset-0 bg-black/40 md:bg-black/30 pointer-events-none" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.12)_0%,transparent_70%)] pointer-events-none" />
-          
-          {/* Reduced Opacity for Mobile Scanlines to save GPU */}
-          <div className={`absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.01),rgba(0,255,0,0.01),rgba(0,0,255,0.01))] z-[1] bg-[length:100%_4px,3px_100%] pointer-events-none ${isMobile ? 'opacity-20' : 'opacity-100'}`} />
+
+          {/* Reduced Scanline complexity on mobile */}
+          <div className={`absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] z-[1] bg-[length:100%_4px] pointer-events-none ${isMobile ? 'opacity-30' : 'opacity-100'}`} />
         </div>
       )}
 
@@ -178,21 +176,26 @@ function App() {
           -ms-overflow-style: none;
           scrollbar-width: none;
           background-color: black;
-        }
-        
-        /* GPU Acceleration for the 3D Container */
-        spline-viewer {
-          transform: translateZ(0);
-          will-change: transform;
+          /* Prevents overscroll 'rubber-banding' which jitters 3D scenes */
+          overscroll-behavior-y: none;
         }
 
-        /* Prevent the 3D model from stealing scroll focus on mobile */
+        /* Essential for Mobile Performance */
+        spline-viewer {
+          /* Force hardware acceleration without changing visuals */
+          backface-visibility: hidden;
+          perspective: 1000;
+          transform: translate3d(0,0,0); 
+        }
+
+        /* Stop the browser from trying to track touch on 3D except where needed */
         @media (max-width: 1024px) {
           spline-viewer {
-            pointer-events: none; 
+            pointer-events: none;
           }
+          /* Only allow the head to follow touch/scroll in the hero area */
           #home {
-            pointer-events: auto; /* Only allow interaction in the top section */
+            pointer-events: auto;
           }
         }
       `}</style>
