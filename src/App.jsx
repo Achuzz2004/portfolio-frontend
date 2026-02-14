@@ -18,6 +18,7 @@ import Education from "./pages/Education";
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false); // New: Mobile detection
   const [data, setData] = useState({
     profile: null,
     skills: [],
@@ -27,6 +28,13 @@ function App() {
   });
 
   useEffect(() => {
+    // 1. Detect if the user is on mobile/tablet
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
     const fetchPortfolioData = async () => {
       try {
         const [profileRes, skillsRes, projectsRes, expRes, eduRes] = await Promise.all([
@@ -44,7 +52,7 @@ function App() {
           experience: expRes.results || [],
           education: eduRes.results || [],
         });
-        
+
         setDataLoaded(true);
       } catch (err) {
         console.error("Data fetch failed", err);
@@ -54,6 +62,7 @@ function App() {
 
     fetchPortfolioData();
 
+    // 2. Load Spline Script
     const scriptId = "spline-viewer-script";
     if (!document.getElementById(scriptId)) {
       const script = document.createElement("script");
@@ -73,32 +82,36 @@ function App() {
       }, 4000);
       return () => clearTimeout(timer);
     }
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   return (
     <div className="relative bg-black min-h-screen selection:bg-red-500 selection:text-white overflow-x-hidden">
-      
-      {/* 🤖 RESPONSIVE GLOBAL 3D BACKGROUND */}
+
+      {/* 🤖 OPTIMIZED GLOBAL 3D BACKGROUND */}
       {!isLoading && dataLoaded && (
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-          {/* Scale Logic: 
-              We scale the model up on mobile (scale-150) so the robot stays 
-              prominent even on narrow screens, and reset to scale-100 on desktop.
-          */}
-          <div className="absolute top-0 left-0 w-full h-[calc(100%+70px)] scale-150 md:scale-100 origin-center transition-transform duration-1000">
+          <div className={`absolute top-0 left-0 w-full h-[calc(100%+70px)] ${isMobile ? 'scale-150' : 'scale-100'} origin-center transition-transform duration-1000`}>
             <spline-viewer 
               url="https://prod.spline.design/FEVuO6qGQJw8rWq8/scene.splinecode"
               style={{ width: '100%', height: '100%' }}
               events-target="global"
+              // PERFORMANCE FIXES BELOW:
+              hint="speed"           // Prioritizes FPS over visual quality
+              loading-alt            // Shows a placeholder while loading
+              {...(isMobile && { 
+                "device-pixel-ratio": "1", // Forces standard resolution on high-DPI phones
+                "touch-move": "true"       // Ensures touch events are handled efficiently
+              })}
             ></spline-viewer>
           </div>
-          
-          {/* Visual Overlays - Adjusted opacity for mobile visibility */}
+
           <div className="absolute inset-0 bg-black/40 md:bg-black/30 pointer-events-none" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.12)_0%,transparent_70%)] pointer-events-none" />
           
-          {/* Scanline Effect - Subtle on mobile to prevent aliasing issues */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.01),rgba(0,255,0,0.01),rgba(0,0,255,0.01))] z-[1] bg-[length:100%_4px,3px_100%] pointer-events-none opacity-50 md:opacity-100" />
+          {/* Reduced Opacity for Mobile Scanlines to save GPU */}
+          <div className={`absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.01),rgba(0,255,0,0.01),rgba(0,0,255,0.01))] z-[1] bg-[length:100%_4px,3px_100%] pointer-events-none ${isMobile ? 'opacity-20' : 'opacity-100'}`} />
         </div>
       )}
 
@@ -121,18 +134,16 @@ function App() {
             className="relative z-10"
           >
             <Navbar />
-            
+
             <main className="w-full">
-              {/* Home Section - Full height */}
               <section id="home" className="min-h-screen">
                 <Home profile={data.profile} />
               </section>
 
-              {/* All sections now have transparent backgrounds and no borders */}
               <section id="about">
                 <About profile={data.profile} />
               </section>
-              
+
               <section id="skills">
                 <Skills skills={data.skills} />
               </section>
@@ -155,12 +166,10 @@ function App() {
         )}
       </AnimatePresence>
 
-      {/* Global CSS for smoother mobile experience */}
       <style jsx global>{`
         html {
           scroll-behavior: smooth;
         }
-        /* Hide scrollbar but allow scrolling */
         ::-webkit-scrollbar {
           width: 0px;
           background: transparent;
@@ -168,6 +177,23 @@ function App() {
         body {
           -ms-overflow-style: none;
           scrollbar-width: none;
+          background-color: black;
+        }
+        
+        /* GPU Acceleration for the 3D Container */
+        spline-viewer {
+          transform: translateZ(0);
+          will-change: transform;
+        }
+
+        /* Prevent the 3D model from stealing scroll focus on mobile */
+        @media (max-width: 1024px) {
+          spline-viewer {
+            pointer-events: none; 
+          }
+          #home {
+            pointer-events: auto; /* Only allow interaction in the top section */
+          }
         }
       `}</style>
     </div>
