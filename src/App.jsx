@@ -93,18 +93,21 @@ function App() {
 
       {/* 3D BACKGROUND */}
       {!isLoading && dataLoaded && (
-        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-[calc(100%+70px)] scale-150 md:scale-100 origin-center transition-transform duration-1000">
+        <div className="fixed inset-0 z-0 overflow-hidden">
+
+          {/* Spline Viewer - interactive */}
+          <div className="absolute top-0 left-0 w-full h-[calc(100%+70px)] scale-150 md:scale-100 origin-center transition-transform duration-1000 pointer-events-auto">
             <spline-viewer
               url="https://prod.spline.design/FEVuO6qGQJw8rWq8/scene.splinecode"
               style={{ width: "100%", height: "100%" }}
             ></spline-viewer>
           </div>
 
-          {/* Overlays */}
+          {/* Overlays - non interactive */}
           <div className="absolute inset-0 bg-black/40 md:bg-black/30 pointer-events-none" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.12)_0%,transparent_70%)] pointer-events-none" />
           <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.01),rgba(0,255,0,0.01),rgba(0,0,255,0.01))] z-[1] bg-[length:100%_4px,3px_100%] pointer-events-none opacity-50 md:opacity-100" />
+
         </div>
       )}
 
