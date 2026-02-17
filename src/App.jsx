@@ -1,4 +1,4 @@
-Import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { api } from "./api/api";
 
@@ -29,16 +29,27 @@ function App() {
   useEffect(() => {
     const fetchPortfolioData = async () => {
       try {
-        const [profileRes, skillsRes, projectsRes, expRes, eduRes] = await Promise.all([
-          api.getProfile(),
-          api.getSkills ? api.getSkills() : Promise.resolve({ results: [] }),
-          api.getProjects ? api.getProjects() : Promise.resolve({ results: [] }),
-          api.getExperience ? api.getExperience() : Promise.resolve({ results: [] }),
-          api.getEducation ? api.getEducation() : Promise.resolve({ results: [] }),
-        ]);
+        const [profileRes, skillsRes, projectsRes, expRes, eduRes] =
+          await Promise.all([
+            api.getProfile(),
+            api.getSkills
+              ? api.getSkills()
+              : Promise.resolve({ results: [] }),
+            api.getProjects
+              ? api.getProjects()
+              : Promise.resolve({ results: [] }),
+            api.getExperience
+              ? api.getExperience()
+              : Promise.resolve({ results: [] }),
+            api.getEducation
+              ? api.getEducation()
+              : Promise.resolve({ results: [] }),
+          ]);
 
         setData({
-          profile: profileRes.results ? profileRes.results[0] : null,
+          profile: profileRes.results
+            ? profileRes.results[0]
+            : null,
           skills: skillsRes.results || [],
           projects: projectsRes.results || [],
           experience: expRes.results || [],
@@ -48,18 +59,20 @@ function App() {
         setDataLoaded(true);
       } catch (err) {
         console.error("Data fetch failed", err);
-        setDataLoaded(true); 
+        setDataLoaded(true);
       }
     };
 
     fetchPortfolioData();
 
+    // Load Spline Script
     const scriptId = "spline-viewer-script";
     if (!document.getElementById(scriptId)) {
       const script = document.createElement("script");
       script.id = scriptId;
       script.type = "module";
-      script.src = "https://unpkg.com/@splinetool/viewer@1.12.53/build/spline-viewer.js";
+      script.src =
+        "https://unpkg.com/@splinetool/viewer@1.12.53/build/spline-viewer.js";
       document.body.appendChild(script);
     }
 
@@ -76,34 +89,27 @@ function App() {
   }, []);
 
   return (
-    <div className="relative bg-black min-h-screen selection:bg-red-500 selection:text-white overflow-x-hidden">
+    <div className="relative bg-black min-h-screen selection:bg-red-500 selection:text-white overflow-x-hidden overflow-y-auto">
 
-      {/* 🤖 RESPONSIVE GLOBAL 3D BACKGROUND */}
+      {/* 3D BACKGROUND */}
       {!isLoading && dataLoaded && (
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-          {/* Scale Logic: 
-              We scale the model up on mobile (scale-150) so the robot stays 
-              prominent even on narrow screens, and reset to scale-100 on desktop.
-          */}
           <div className="absolute top-0 left-0 w-full h-[calc(100%+70px)] scale-150 md:scale-100 origin-center transition-transform duration-1000">
-            <spline-viewer 
+            <spline-viewer
               url="https://prod.spline.design/FEVuO6qGQJw8rWq8/scene.splinecode"
-              style={{ width: '100%', height: '100%' }}
-              events-target="global"
+              style={{ width: "100%", height: "100%" }}
             ></spline-viewer>
           </div>
 
-          {/* Visual Overlays - Adjusted opacity for mobile visibility */}
+          {/* Overlays */}
           <div className="absolute inset-0 bg-black/40 md:bg-black/30 pointer-events-none" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.12)_0%,transparent_70%)] pointer-events-none" />
-
-          {/* Scanline Effect - Subtle on mobile to prevent aliasing issues */}
           <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.01),rgba(0,255,0,0.01),rgba(0,0,255,0.01))] z-[1] bg-[length:100%_4px,3px_100%] pointer-events-none opacity-50 md:opacity-100" />
         </div>
       )}
 
       <AnimatePresence mode="wait">
-        {(isLoading || !dataLoaded) ? (
+        {isLoading || !dataLoaded ? (
           <motion.div
             key="loader"
             initial={{ opacity: 1 }}
@@ -123,12 +129,11 @@ function App() {
             <Navbar />
 
             <main className="w-full">
-              {/* Home Section - Full height */}
+
               <section id="home" className="min-h-screen">
                 <Home profile={data.profile} />
               </section>
 
-              {/* All sections now have transparent backgrounds and no borders */}
               <section id="about">
                 <About profile={data.profile} />
               </section>
@@ -148,6 +153,7 @@ function App() {
               <section id="projects">
                 <Projects projects={data.projects} />
               </section>
+
             </main>
 
             <Footer />
@@ -155,16 +161,21 @@ function App() {
         )}
       </AnimatePresence>
 
-      {/* Global CSS for smoother mobile experience */}
+      {/* Global CSS */}
       <style jsx global>{`
         html {
           scroll-behavior: smooth;
         }
-        /* Hide scrollbar but allow scrolling */
+
+        section {
+          scroll-margin-top: 80px;
+        }
+
         ::-webkit-scrollbar {
           width: 0px;
           background: transparent;
         }
+
         body {
           -ms-overflow-style: none;
           scrollbar-width: none;
