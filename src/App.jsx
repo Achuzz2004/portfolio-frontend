@@ -65,7 +65,7 @@ function App() {
 
     fetchPortfolioData();
 
-    // Load Spline Script
+    // Load Spline Script Once
     const scriptId = "spline-viewer-script";
     if (!document.getElementById(scriptId)) {
       const script = document.createElement("script");
@@ -89,24 +89,24 @@ function App() {
   }, []);
 
   return (
-    <div className="relative bg-black min-h-screen selection:bg-red-500 selection:text-white overflow-x-hidden overflow-y-auto">
+    <div className="relative bg-black min-h-screen overflow-x-hidden">
 
-      {/* 3D BACKGROUND */}
+      {/* SPLINE BACKGROUND */}
       {!isLoading && dataLoaded && (
-        <div className="fixed inset-0 z-0 overflow-hidden">
+        <div className="fixed inset-0 z-0">
 
-          {/* Spline Viewer - interactive */}
-          <div className="absolute top-0 left-0 w-full h-[calc(100%+70px)] scale-150 md:scale-100 origin-center transition-transform duration-1000 pointer-events-auto">
-            <spline-viewer
-              url="https://prod.spline.design/FEVuO6qGQJw8rWq8/scene.splinecode"
-              style={{ width: "100%", height: "100%" }}
-            ></spline-viewer>
-          </div>
+          <spline-viewer
+            url="https://prod.spline.design/FEVuO6qGQJw8rWq8/scene.splinecode"
+            style={{
+              width: "100%",
+              height: "100%",
+              pointerEvents: "auto"
+            }}
+          ></spline-viewer>
 
-          {/* Overlays - non interactive */}
-          <div className="absolute inset-0 bg-black/40 md:bg-black/30 pointer-events-none" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.12)_0%,transparent_70%)] pointer-events-none" />
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.01),rgba(0,255,0,0.01),rgba(0,0,255,0.01))] z-[1] bg-[length:100%_4px,3px_100%] pointer-events-none opacity-50 md:opacity-100" />
+          {/* Overlays (non-interactive) */}
+          <div className="absolute inset-0 bg-black/40 pointer-events-none"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.12)_0%,transparent_70%)] pointer-events-none"></div>
 
         </div>
       )}
@@ -127,7 +127,7 @@ function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
-            className="relative z-10"
+            className="relative z-20"
           >
             <Navbar />
 
@@ -164,7 +164,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      {/* Global CSS */}
+      {/* Smooth Scroll Fix */}
       <style jsx global>{`
         html {
           scroll-behavior: smooth;
@@ -173,17 +173,8 @@ function App() {
         section {
           scroll-margin-top: 80px;
         }
-
-        ::-webkit-scrollbar {
-          width: 0px;
-          background: transparent;
-        }
-
-        body {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
       `}</style>
+
     </div>
   );
 }
