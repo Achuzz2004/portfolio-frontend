@@ -11,7 +11,7 @@ import {
 export default function Home({ profile }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const RESUME_DOWNLOAD_URL = "https://drive.google.com/uc?export=download&id=1a_Yhuiz2AQprnIjQVAUPLFdCpY_ZLUJe";
+  const RESUME_DOWNLOAD_URL = "https://drive.google.com/uc?export=download&id=1MH4DD2vg8j8ayAhO2b2vVNcIJfxFyfcR";
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
